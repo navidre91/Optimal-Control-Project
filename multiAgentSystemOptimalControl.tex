@@ -1,0 +1,117 @@
+
+\documentclass[conference]{IEEEtran}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{commath}
+
+\ifCLASSINFOpdf
+
+\else
+
+\fi
+
+
+
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+
+\begin{document}
+
+\title{Semi-Decentralized Optimal Control of a Cooperative Team of Agents}
+
+
+\author{\IEEEauthorblockN{Navid Rezazadeh}
+\IEEEauthorblockA{School of Mechanical Engineering\\
+Missouri University of Science and Technology\\
+Rolla, Missouri 65401\\
+Email: nr9q7@mst.edu}}
+
+\maketitle
+
+
+\begin{abstract}
+In this project a decentralized optimal control law is proposed for a team of dynamic agents which is also called a multi agent system. The purpose of this controller for the group of agents is to accomplish consensus in a leader less structure. In this order a semi-decentralized optimal control strategy is designed. The optimal control law is based on the local cost function of each of the agents and this cost function minimized based on the Hamilton Jacobi Bellman (HJB). The dynamic of the agents is governed based on the interaction between agents which is basically the flow of information about states of agents toward each other. Beside this flow of information there is also a local control input to each agent which also plays a roll in controlling dynamics of each agent. The optimal control law essentially effects the system though this control input. The consensus algorithm is derived in a formal way that is based on conventional control methodologies. Finally, the simulation results are presented in order to show the effectiveness of the proposed optimal control law.
+\end{abstract}
+
+\IEEEpeerreviewmaketitle
+
+
+
+\section{Introduction}
+Engineered, distributed multi agent networks have posed a number of challenges in terms of their system theoretic analysis and synthesis. Agents in such networks are required to operate in concert with each other in order to achieve system level objectives, while having access to limited computational resources and local communications and sensing capabilities.
+A good example of multi agent system is unmanned systems networks which draws great amount of attention in multi agent control community. The reason for this importance is that this kind of systems are becoming pretty prevalent. besides, these networks consists of a large number of agents, such as unmanned aerial vehicles, unmanned ground vehicles and unmanned aerial vehicles, and each agent is equipped with tens of sensors which essentially results in a large scale network of sensors and this makes this kind of dynamic systems challenging to control. Some of the applications of the mentioned network can be addressed as home and building automation, intelligent transportation systems, health monitoring and assisting, space exploration, and commercial applications. \\
+
+In order to deploy these networks, a control algorithm is necessary for the agents so that they become able to cooperate with each other to accomplish a pre defined mission. The cooperation of agents in a network of agents is known as formation, networking agreement, swarming or collective motion in different contexts. The extent of the fields where cooperation of the agents is defined makes the control problems pretty challenging in the context of multi agents systems. for example one of the problems which arises with formation control is presence of uncertainties in the agents which makes it necessary to use adaptive control methods.\\
+There has been a lot of work done in cooperation of a network of agents. However, there are still unsolved problems in this area. In most of the works that has been done so far, first a controller is suggested and then performance and properties of the controller is analyzed. However, there are few works that start from a list of desired specification and then propose a controller based on the list. In this work, an optimal control law is proposed to govern  output consensus of a team of agents over a common value based on a predefined system specification where in the context of optimal control it becomes cost function. Using the cost function it is possible to specify the weights which determines convergence rate to the common value of consensus and the amount of energy which is going to be used. \\
+A centralized implementation of a network of agents means that all agents have access to the information from all other agents in the network or a central brain has access to the local information of all agents and calculates the control signal of each of agent and sends it back to each them. However the method which is proposed in this work is semi decentralized which means that each agent has access to local information of a limited number of agents. This method of implementation reduces the amount of communications and calculations necessary to happen in each agent.
+
+\section{Methodology}
+
+\subsection{Problem definition}
+\textit{Information structure and neighboring set:}\\
+The set of all agents is defined as $ \left\{ A=a_{i}, i=1,...,N\right\} $, where $N$ is the number of total agents. In a network of agents, each agent should work in coordination with other members so it has to know states of other agents. In order to know states of other agents there should exist communication links between agents. However, since the implementation is semi decentralized, each agent is not connected to all other agents. For each agent there are some specific other agents which it can communicate with. In this work it is assumed that the communication links stay the same all the time, so the topology of network does not change over time. This topology can be defined as set for each agent where it specifies the other agents who has established a connection with the agent. This set is defined as
+
+\begin{equation}\label{eq:setOfNeighbors}
+\forall \quad i=1,...,N \quad  N^{i}=\left\{j=1,...,N|a_{j}Ra_{i}\right\}
+\end{equation}
+
+where $R$ designates the existence of a relation between $a_{i}$ and $a_{j}$ that the two agents are able to send each other the information about their states.\\
+
+The mentioned set only provides information about one specific agent but it does not give information about the connections on the whole network. In other to have information of the connections of the agents over the network a matrix is defined as Laplacian of the network. Using this matrix it becomes possible to comprehend information about network structure such as connectedness of network or the neighboring set $N^{i}$. The Laplacian matrix is defined as 
+\begin{equation}\label{eq:laplacian}
+L=[l_{ij}]_{N\times N}; \quad l_{ij}=
+  \begin{cases}
+  O^{i} \quad i=j\\
+  -1 \quad a_{i}Ra_{j}\\
+  0 \quad otherwise 
+  \end{cases}
+\end{equation}
+
+in which $O^{i}$ is the number of the links connected to the vertex $i$ and is called the degree of vertex $i$. This matrix shows the structure of information links existing between the agents.\\
+If the network describing this information structure is connected according to the following definition, then the total team cooperation may be expressed in terms of the cooperation among the agents in each cluster.\\
+\textit{Connected Graphs:} A graph consisting of a vertex set and an edge set is connected if there is a path between any two vertices of it and the path should be in the edge set.\\
+\textit{Ring Topology:} In this topology each agent is connected to its two neighbors 
+\begin{multline}\label{eq:ringTopology}
+\begin{split}
+\forall \quad i=2,...,N \quad  N^{i}=\left\{i-1,i+1\right\}\\
+N^{N}=\left\{N-1,1\right\}, \quad N^{1}=\left\{2,N-1\right\}
+\end{split}
+\end{multline}
+
+
+\subsubsection{Model of interaction among the team members}
+
+Each of the agents has its own dynamics which is considered to be linear. Each agents follows equation of motion given by 
+\begin{equation}\label{eq:agentEquation}
+\dot{X}^{i}=A^{i}X^{i}+B^{i}u^{i}, \quad u^{i}\in R^{m}
+\end{equation}
+\begin{equation}\label{eq:agentEquationOutput}
+Y^{i}=c^{i}X^{i}, \quad Y^{i}\in R^{n}
+\end{equation}
+in which $q$, $m$ and $n$ are the dimensions of the state space representing the dynamics of each agent, its control input and output vectors, respectively. The system defined above shows the dynamic of the each agent and as it can be seen the dynamics is isolated for each agent. However, as it was mentioned earlier the team of agents cooperate with each other in order to accomplish a mission. Therefore, there should be some interaction between the agents through their dynamics. This interaction can be considered for each agent through the input channel and based in its available information, which originates form the output of other agents in its neighboring  
+
+
+
+\section{Conclusion}
+The conclusion goes here.
+
+
+
+\section*{Acknowledgment}
+
+
+The authors would like to thank...
+
+
+\begin{thebibliography}{1}
+
+\bibitem{IEEEhowto:kopka}
+H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+
+\end{thebibliography}
+
+
+\end{document}
+
+
