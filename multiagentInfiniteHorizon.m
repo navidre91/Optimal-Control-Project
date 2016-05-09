@@ -1,4 +1,4 @@
-%Finite horizon simulation
+%Infinite horizon simulation
 
 clear; clc
 
@@ -18,44 +18,25 @@ x3=[14;8]; %Initial position of third agent
 x4=[2;1]; %Initial position of fourth agent
 
 
-T=30; %Total simulation time
+T=5; %Total simulation time
 dt=0.1; % time step
 t(1)=0;
 index=1;
 
-K = 2*E; %initial condition for calculating optimal conrol gain
-
-%Optimal control gain calculation
-for k=T:-dt:0
-    
-    Kdot=2*N*Q-1/2*K(:,:,index)*R*K(:,:,index);
-    K(:,:,index+1)=K(:,:,index)+Kdot*dt;
-    tRec(index)=k;
-    index=index+1;
-end
-
-t(1)=0;
-index=1;
-
+%SteaDY state Optimal control gain calculation
+K = care([0 0;0 0],R/sqrt(2),2*N*Q);
+lamda=-1/2*R*K;
 
 %Simulation of system
 for k=0:dt:T
     
-    %Interaction term calculation
-    F= 2*K(:,:,length(K)-index+1)^-1*Q;
-    
     %Optimal control gain calculation
-    u1=-1/2*R^1*K(:,:,length(K)-index+1)*v1;
-    u2=-1/2*R^1*K(:,:,length(K)-index+1)*v2;
-    u3=-1/2*R^1*K(:,:,length(K)-index+1)*v3;
-    u3=-1/2*R^1*K(:,:,length(K)-index+1)*v4;
-    
     %Acceleration calculation
-    v1dot=u1+F*(v2+v3);
-    v2dot=u2+F*(v1+v4);
-    v3dot=u3+F*(v1+v2);
-    v4dot=u3+F*(v2+v3);
-   
+    v1dot=lamda*(v1-(v2+v3)/2);
+    v2dot=lamda*(v2-(v1+v4)/2);
+    v3dot=lamda*(v3-(v1+v2)/2);
+    v4dot=lamda*(v4-(v2+v3)/2);
+    
     %Positon calculation
     x1=x1+v1*dt;
     x2=x2+v2*dt;
@@ -69,6 +50,7 @@ for k=0:dt:T
     v4=v4+dt*v4dot;
     
     %data recording
+    
     x1Rec(:,index)=x1;
     x2Rec(:,index)=x2;
     x3Rec(:,index)=x3;

@@ -1,0 +1,29 @@
+% article example for classicthesis.sty
+\documentclass[11pt,a4paper]{article} % KOMA-Script article scrartcl
+\usepackage{lipsum}
+\usepackage{url}
+\usepackage[nochapters]{classicthesis} % nochapters
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{commath}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage[]{mcode}
+\pagenumbering{gobble}
+
+\newtheorem{theorem}{Theorem}
+\DeclareMathOperator{\sgn}{sgn}
+
+\begin{document}
+
+\textbf{Appendix: MATLAB CODE}\\
+
+\lstinputlisting{multiagentInfiniteHorizon.m}
+\lstinputlisting{multiagentFiniteHorizon.m}
+
+
+
+\end{document} 
